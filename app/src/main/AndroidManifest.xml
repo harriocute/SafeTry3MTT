@@ -38,7 +38,7 @@
         <activity
             android:name=".ui.ShareReceiverActivity"
             android:exported="true"
-            android:label="Privacy Ghost"
+            android:label="ImageSafe 3MTT"
             android:icon="@mipmap/ic_launcher"
             android:theme="@style/Theme.SafeTry3MTT.Translucent">
             <intent-filter>

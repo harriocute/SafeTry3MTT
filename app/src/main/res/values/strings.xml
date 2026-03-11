@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Safe Try 3MTT</string>
-    <string name="processing_title">Privacy Ghost</string>
-    <string name="share_target_label">Privacy Ghost</string>
+    <string name="app_name">ImageSafe 3MTT</string>
+    <string name="processing_title">ImageSafe 3MTT</string>
+    <string name="share_target_label">ImageSafe 3MTT</string>
 
     <!-- UI Labels -->
     <string name="btn_scan_file">Scan a File</string>
@@ -23,7 +23,7 @@
     <string name="share_error">Error sharing file</string>
 
     <!-- Notification -->
-    <string name="notification_title">Privacy Ghost Active</string>
+    <string name="notification_title">ImageSafe 3MTT Active</string>
     <string name="notification_text">Protecting your photos when you share</string>
     <string name="notification_stop">Stop</string>
 
