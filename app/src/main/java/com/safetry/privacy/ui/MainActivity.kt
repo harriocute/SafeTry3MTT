@@ -61,10 +61,8 @@ class MainActivity : AppCompatActivity() {
         binding.switchAutoRemoveMetadata.setOnCheckedChangeListener { _, v ->
             lifecycleScope.launch { prefs.setAutoRemoveMetadata(v) }
         }
-        binding.btnGithub.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/harriocute")))
         }
-        binding.btnLinkedin.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.linkedin.com/in/harricode")))
         }
     }

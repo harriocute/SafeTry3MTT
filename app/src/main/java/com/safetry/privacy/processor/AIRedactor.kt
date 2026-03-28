@@ -16,6 +16,7 @@ class AIRedactor(private val context: Context) {
     private val signLabels = setOf("stop sign", "traffic light", "street sign", "sign")
     private val personLabels = setOf("person")
     private val documentLabels = setOf("book", "notebook", "document", "paper", "cell phone")
+    private val badgeLabels = setOf("badge", "card", "wallet")
 
     init {
         initializeDetectors()
@@ -28,7 +29,6 @@ class AIRedactor(private val context: Context) {
                 .setMaxResults(20)
                 .setScoreThreshold(0.3f)
                 .build()
-
             val assetFiles = context.assets.list("models") ?: emptyArray()
             if (assetFiles.contains("detect.tflite")) {
                 objectDetector = org.tensorflow.lite.task.vision.detector.ObjectDetector
@@ -40,11 +40,23 @@ class AIRedactor(private val context: Context) {
         }
     }
 
-    fun detectSensitiveContent(bitmap: Bitmap, blurFaces: Boolean): List<DetectionResult> {
+    fun detectSensitiveContent(
+        bitmap: Bitmap,
+        blurFaces: Boolean,
+        blurLicensePlates: Boolean,
+        blurStreetSigns: Boolean,
+        blurIdBadges: Boolean,
+        blurTextDocs: Boolean
+    ): List<DetectionResult> {
         val detections = mutableListOf<DetectionResult>()
 
         if (isInitialized && objectDetector != null) {
-            detections.addAll(runTFLiteDetection(bitmap, blurFaces))
+            detections.addAll(
+                runTFLiteDetection(
+                    bitmap, blurFaces, blurLicensePlates,
+                    blurStreetSigns, blurIdBadges, blurTextDocs
+                )
+            )
         } else if (blurFaces) {
             detections.addAll(runFallbackFaceDetection(bitmap))
         }
@@ -52,7 +64,14 @@ class AIRedactor(private val context: Context) {
         return detections
     }
 
-    private fun runTFLiteDetection(bitmap: Bitmap, blurFaces: Boolean): List<DetectionResult> {
+    private fun runTFLiteDetection(
+        bitmap: Bitmap,
+        blurFaces: Boolean,
+        blurLicensePlates: Boolean,
+        blurStreetSigns: Boolean,
+        blurIdBadges: Boolean,
+        blurTextDocs: Boolean
+    ): List<DetectionResult> {
         val results = mutableListOf<DetectionResult>()
         try {
             val tensorImage = org.tensorflow.lite.support.image.TensorImage.fromBitmap(bitmap)
@@ -63,12 +82,18 @@ class AIRedactor(private val context: Context) {
                 val score = detection.categories.firstOrNull()?.score ?: 0f
                 val box = detection.boundingBox
 
+                // Only detect if the toggle is ON
                 val category = when {
-                    vehicleLabels.any { label.contains(it) } -> DetectionCategory.LICENSE_PLATE
-                    signLabels.any { label.contains(it) } -> DetectionCategory.STREET_SIGN
-                    personLabels.any { label.contains(it) } && blurFaces -> DetectionCategory.FACE
-                    documentLabels.any { label.contains(it) } -> DetectionCategory.TEXT_DOCUMENT
-                    label.contains("badge") || label.contains("card") -> DetectionCategory.ID_BADGE
+                    blurLicensePlates && vehicleLabels.any { label.contains(it) } ->
+                        DetectionCategory.LICENSE_PLATE
+                    blurStreetSigns && signLabels.any { label.contains(it) } ->
+                        DetectionCategory.STREET_SIGN
+                    blurFaces && personLabels.any { label.contains(it) } ->
+                        DetectionCategory.FACE
+                    blurTextDocs && documentLabels.any { label.contains(it) } ->
+                        DetectionCategory.TEXT_DOCUMENT
+                    blurIdBadges && badgeLabels.any { label.contains(it) } ->
+                        DetectionCategory.ID_BADGE
                     else -> continue
                 }
 
@@ -112,29 +137,24 @@ class AIRedactor(private val context: Context) {
                 val faceWidth = eyeDistance * 3f
                 val faceHeight = eyeDistance * 4f
 
-                val box = RectF(
-                    max(0f, midpoint.x - faceWidth / 2),
-                    max(0f, midpoint.y - faceHeight / 2),
-                    min(width.toFloat(), midpoint.x + faceWidth / 2),
-                    min(height.toFloat(), midpoint.y + faceHeight / 2)
-                )
-
                 results.add(DetectionResult(
                     label = "Face",
                     category = DetectionCategory.FACE,
                     confidence = face.confidence(),
-                    boundingBox = box
+                    boundingBox = RectF(
+                        max(0f, midpoint.x - faceWidth / 2),
+                        max(0f, midpoint.y - faceHeight / 2),
+                        min(width.toFloat(), midpoint.x + faceWidth / 2),
+                        min(height.toFloat(), midpoint.y + faceHeight / 2)
+                    )
                 ))
             }
-        } catch (e: Exception) {
-            // face detection not available
-        }
+        } catch (e: Exception) { }
         return results
     }
 
     fun applyRedactions(bitmap: Bitmap, detections: List<DetectionResult>): Bitmap {
         if (detections.isEmpty()) return bitmap
-
         val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
         val canvas = Canvas(mutableBitmap)
         val paint = Paint()
@@ -145,7 +165,6 @@ class AIRedactor(private val context: Context) {
             val top = max(0, box.top.toInt())
             val right = min(mutableBitmap.width, box.right.toInt())
             val bottom = min(mutableBitmap.height, box.bottom.toInt())
-
             if (right <= left || bottom <= top) continue
 
             val region = Bitmap.createBitmap(mutableBitmap, left, top, right - left, bottom - top)
@@ -154,7 +173,6 @@ class AIRedactor(private val context: Context) {
             region.recycle()
             blurred.recycle()
         }
-
         return mutableBitmap
     }
 
@@ -164,16 +182,13 @@ class AIRedactor(private val context: Context) {
         val paint = Paint().apply { isAntiAlias = false }
         val width = bitmap.width
         val height = bitmap.height
-
         var y = 0
         while (y < height) {
             var x = 0
             while (x < width) {
                 val blockW = min(blockSize, width - x)
                 val blockH = min(blockSize, height - y)
-                val centerX = min(x + blockW / 2, width - 1)
-                val centerY = min(y + blockH / 2, height - 1)
-                paint.color = bitmap.getPixel(centerX, centerY)
+                paint.color = bitmap.getPixel(min(x + blockW / 2, width - 1), min(y + blockH / 2, height - 1))
                 canvas.drawRect(x.toFloat(), y.toFloat(), (x + blockW).toFloat(), (y + blockH).toFloat(), paint)
                 x += blockSize
             }
@@ -182,7 +197,5 @@ class AIRedactor(private val context: Context) {
         return result
     }
 
-    fun close() {
-        objectDetector?.close()
-    }
+    fun close() { objectDetector?.close() }
 }

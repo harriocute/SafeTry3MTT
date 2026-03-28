@@ -11,13 +11,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
 import com.safetry.privacy.databinding.ActivityProcessingBinding
-import com.safetry.privacy.model.PrivacyReport
 import com.safetry.privacy.model.DetectionResult
-import com.safetry.privacy.processor.ExifScrubber
+import com.safetry.privacy.model.PrivacyReport
 import com.safetry.privacy.processor.AIRedactor
+import com.safetry.privacy.processor.ExifScrubber
 import com.safetry.privacy.processor.PrivacyScorer
-import com.safetry.privacy.utils.PreferencesManager
 import com.safetry.privacy.utils.FileUtils
+import com.safetry.privacy.utils.PreferencesManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -34,11 +34,10 @@ class ProcessingActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivityProcessingBinding
-    private lateinit var preferencesManager: PreferencesManager
+    private lateinit var prefs: PreferencesManager
     private lateinit var exifScrubber: ExifScrubber
     private lateinit var aiRedactor: AIRedactor
     private lateinit var privacyScorer: PrivacyScorer
-
     private var cleanedFilePath: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +45,7 @@ class ProcessingActivity : AppCompatActivity() {
         binding = ActivityProcessingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        preferencesManager = PreferencesManager(this)
+        prefs = PreferencesManager(this)
         exifScrubber = ExifScrubber(this)
         aiRedactor = AIRedactor(this)
         privacyScorer = PrivacyScorer()
@@ -72,7 +71,6 @@ class ProcessingActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                // Step 1: Load bitmap
                 updateStatus("Loading image...")
                 val originalBitmap = withContext(Dispatchers.IO) {
                     loadBitmapFromUri(imageUri)
@@ -81,38 +79,41 @@ class ProcessingActivity : AppCompatActivity() {
                     return@launch
                 }
 
-                // Step 2: Read preferences
-                val blurFaces = withContext(Dispatchers.IO) {
-                    preferencesManager.getBlurFaces().first()
-                }
+                // Read ALL toggle preferences
+                val blurFaces = withContext(Dispatchers.IO) { prefs.getBlurFaces().first() }
+                val blurPlates = withContext(Dispatchers.IO) { prefs.getBlurLicensePlates().first() }
+                val blurSigns = withContext(Dispatchers.IO) { prefs.getBlurStreetSigns().first() }
+                val blurBadges = withContext(Dispatchers.IO) { prefs.getBlurIdBadges().first() }
+                val blurDocs = withContext(Dispatchers.IO) { prefs.getBlurTextDocs().first() }
 
-                // Step 3: Analyze EXIF
                 updateStatus("Analyzing metadata...")
                 val exifData = withContext(Dispatchers.IO) {
                     exifScrubber.analyzeExif(imageUri)
                 }
 
-                // Step 4: AI detection
                 updateStatus("Running AI analysis...")
                 val detections = withContext(Dispatchers.Default) {
                     try {
-                        aiRedactor.detectSensitiveContent(originalBitmap, blurFaces)
+                        // Pass each toggle individually - only detect what is ON
+                        aiRedactor.detectSensitiveContent(
+                            bitmap = originalBitmap,
+                            blurFaces = blurFaces,
+                            blurLicensePlates = blurPlates,
+                            blurStreetSigns = blurSigns,
+                            blurIdBadges = blurBadges,
+                            blurTextDocs = blurDocs
+                        )
                     } catch (e: Exception) {
                         emptyList()
                     }
                 }
 
-                // Step 5: Apply blur
                 updateStatus("Applying privacy protection...")
                 val redactedBitmap = withContext(Dispatchers.Default) {
-                    try {
-                        aiRedactor.applyRedactions(originalBitmap, detections)
-                    } catch (e: Exception) {
-                        originalBitmap
-                    }
+                    try { aiRedactor.applyRedactions(originalBitmap, detections) }
+                    catch (e: Exception) { originalBitmap }
                 }
 
-                // Step 6: Save clean file
                 updateStatus("Saving clean image...")
                 val cleanFile = withContext(Dispatchers.IO) {
                     val tempFile = FileUtils.createTempImageFile(this@ProcessingActivity)
@@ -121,10 +122,7 @@ class ProcessingActivity : AppCompatActivity() {
                 }
                 cleanedFilePath = cleanFile.absolutePath
 
-                // Step 7: Generate report
                 val report = privacyScorer.generateReport(exifData, detections)
-
-                // Step 8: Show results
                 showResults(redactedBitmap, detections, report)
 
             } catch (e: Exception) {
@@ -139,29 +137,14 @@ class ProcessingActivity : AppCompatActivity() {
 
     private fun loadBitmapFromUri(uri: Uri): Bitmap? {
         return try {
-            val options = BitmapFactory.Options().apply {
-                inJustDecodeBounds = true
-            }
-            contentResolver.openInputStream(uri)?.use {
-                BitmapFactory.decodeStream(it, null, options)
-            }
-
-            // Scale down if too large (max 2048px)
+            val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, options) }
             val maxSize = 2048
             var scale = 1
-            while (options.outWidth / scale > maxSize || options.outHeight / scale > maxSize) {
-                scale *= 2
-            }
-
-            val decodeOptions = BitmapFactory.Options().apply {
-                inSampleSize = scale
-            }
-            contentResolver.openInputStream(uri)?.use {
-                BitmapFactory.decodeStream(it, null, decodeOptions)
-            }
-        } catch (e: Exception) {
-            null
-        }
+            while (options.outWidth / scale > maxSize || options.outHeight / scale > maxSize) scale *= 2
+            val decodeOptions = BitmapFactory.Options().apply { inSampleSize = scale }
+            contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, decodeOptions) }
+        } catch (e: Exception) { null }
     }
 
     private fun showProcessingState() {
@@ -171,11 +154,7 @@ class ProcessingActivity : AppCompatActivity() {
         binding.btnShareClean.isEnabled = false
     }
 
-    private fun showResults(
-        bitmap: Bitmap,
-        detections: List<DetectionResult>,
-        report: PrivacyReport
-    ) {
+    private fun showResults(bitmap: Bitmap, detections: List<DetectionResult>, report: PrivacyReport) {
         binding.layoutProcessing.visibility = View.GONE
         binding.layoutResults.visibility = View.VISIBLE
         binding.layoutError.visibility = View.GONE
@@ -187,45 +166,32 @@ class ProcessingActivity : AppCompatActivity() {
         binding.tvScoreAfter.text = "After:  ${report.scoreAfter}/10"
         binding.scoreProgressBefore.progress = report.scoreBefore * 10
         binding.scoreProgressAfter.progress = report.scoreAfter * 10
-
         binding.tvPrivacyReport.text = buildReportText(report)
         binding.btnShareClean.isEnabled = true
 
-        val beforeColor = when {
+        binding.tvScoreBefore.setTextColor(when {
             report.scoreBefore >= 8 -> getColor(android.R.color.holo_green_dark)
             report.scoreBefore >= 5 -> getColor(android.R.color.holo_orange_dark)
             else -> getColor(android.R.color.holo_red_dark)
-        }
-        val afterColor = getColor(android.R.color.holo_green_dark)
-        binding.tvScoreBefore.setTextColor(beforeColor)
-        binding.tvScoreAfter.setTextColor(afterColor)
+        })
+        binding.tvScoreAfter.setTextColor(getColor(android.R.color.holo_green_dark))
     }
 
     private fun buildReportText(report: PrivacyReport): String {
         val sb = StringBuilder()
         sb.appendLine("🛡️ PRIVACY ANALYSIS REPORT")
         sb.appendLine("─────────────────────────")
-
-        if (report.risks.isEmpty()) {
-            sb.appendLine("✅ No privacy risks detected!")
-        } else {
-            sb.appendLine("⚠️ Issues Found & Fixed:")
-            report.risks.forEach { sb.appendLine("  • $it") }
-        }
-
+        if (report.risks.isEmpty()) sb.appendLine("✅ No privacy risks detected!")
+        else { sb.appendLine("⚠️ Issues Found & Fixed:"); report.risks.forEach { sb.appendLine("  • $it") } }
         sb.appendLine()
         sb.appendLine("📊 Privacy Score")
         sb.appendLine("  Before: ${report.scoreBefore}/10")
         sb.appendLine("  After:  ${report.scoreAfter}/10")
-
         if (report.detectionSummary.isNotEmpty()) {
-            sb.appendLine()
-            sb.appendLine("🔍 AI Detections:")
+            sb.appendLine(); sb.appendLine("🔍 AI Detections:")
             report.detectionSummary.forEach { sb.appendLine("  • $it") }
         }
-
-        sb.appendLine()
-        sb.appendLine("✅ 100% On-Device. No data uploaded.")
+        sb.appendLine(); sb.appendLine("✅ 100% On-Device. No data uploaded.")
         return sb.toString()
     }
 
@@ -238,17 +204,13 @@ class ProcessingActivity : AppCompatActivity() {
 
     private fun shareCleanFile() {
         val file = cleanedFilePath?.let { File(it) } ?: return
-        if (!file.exists()) {
-            Toast.makeText(this, "Clean file not found", Toast.LENGTH_SHORT).show()
-            return
-        }
+        if (!file.exists()) { Toast.makeText(this, "Clean file not found", Toast.LENGTH_SHORT).show(); return }
         val fileUri = FileProvider.getUriForFile(this, "${packageName}.fileprovider", file)
-        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+        startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).apply {
             type = "image/jpeg"
             putExtra(Intent.EXTRA_STREAM, fileUri)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-        startActivity(Intent.createChooser(shareIntent, "Share Clean Image via..."))
+        }, "Share Clean Image via..."))
     }
 
     private fun cleanupAndFinish() {
@@ -256,8 +218,5 @@ class ProcessingActivity : AppCompatActivity() {
         finish()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        aiRedactor.close()
-    }
+    override fun onDestroy() { super.onDestroy(); aiRedactor.close() }
 }
