@@ -45,7 +45,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Safe Try 3MTT"
+                    android:text="AI Metadata Remover Pro"
                     android:textColor="@color/accent_cyan"
                     android:textSize="12sp" />
             </LinearLayout>
