@@ -40,32 +40,21 @@ jobs:
 
       - name: Decode keystore
         run: |
-          echo "${{ secrets.KEYSTORE_FILE }}" | base64 --decode > imagesafe.keystore
+          echo "${{ secrets.KEYSTORE_FILE }}" | base64 --decode > app/imagesafe.keystore
 
       - name: Grant execute permission
         run: chmod +x gradlew
 
-      - name: Build Release APK
-        run: ./gradlew assembleRelease --stacktrace
-
-      - name: Sign APK
-        run: |
-          jarsigner -verbose \
-            -sigalg SHA256withRSA \
-            -digestalg SHA-256 \
-            -keystore imagesafe.keystore \
-            -storepass "${{ secrets.KEYSTORE_PASSWORD }}" \
-            -keypass "${{ secrets.KEY_PASSWORD }}" \
-            app/build/outputs/apk/release/app-release-unsigned.apk \
-            imagesafe
-
-          $ANDROID_HOME/build-tools/33.0.1/zipalign -v 4 \
-            app/build/outputs/apk/release/app-release-unsigned.apk \
-            app/build/outputs/apk/release/ImageSafe-signed.apk
+      - name: Build Signed Release APK
+        run: ./gradlew assembleRelease
+        env:
+          SIGNING_KEY_ALIAS: imagesafe
+          SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
 
       - name: Upload Signed APK
         uses: actions/upload-artifact@v4
         with:
           name: ImageSafe-signed-apk
-          path: app/build/outputs/apk/release/ImageSafe-signed.apk
+          path: app/build/outputs/apk/release/app-release.apk
           retention-days: 30

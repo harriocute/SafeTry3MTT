@@ -70,3 +70,4 @@ app/src/main/assets/models/detect.tflite
 imagesafe.keystore
 *.keystore
 *.b64
+app/imagesafe.keystore
