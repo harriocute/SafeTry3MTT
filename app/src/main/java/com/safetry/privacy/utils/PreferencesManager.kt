@@ -12,46 +12,30 @@ import kotlinx.coroutines.flow.map
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "privacy_settings")
 
 class PreferencesManager(private val context: Context) {
-
     companion object {
         val BLUR_FACES = booleanPreferencesKey("blur_faces")
+        val BLUR_LICENSE_PLATES = booleanPreferencesKey("blur_license_plates")
+        val BLUR_STREET_SIGNS = booleanPreferencesKey("blur_street_signs")
+        val BLUR_ID_BADGES = booleanPreferencesKey("blur_id_badges")
+        val BLUR_TEXT_DOCS = booleanPreferencesKey("blur_text_docs")
         val AUTO_REMOVE_METADATA = booleanPreferencesKey("auto_remove_metadata")
-        val BACKGROUND_SERVICE_ENABLED = booleanPreferencesKey("background_service_enabled")
     }
 
-    fun getBlurFaces(): Flow<Boolean> {
-        return context.dataStore.data.map { preferences ->
-            preferences[BLUR_FACES] ?: false
-        }
-    }
+    fun getBlurFaces(): Flow<Boolean> = context.dataStore.data.map { it[BLUR_FACES] ?: false }
+    suspend fun setBlurFaces(v: Boolean) = context.dataStore.edit { it[BLUR_FACES] = v }
 
-    suspend fun setBlurFaces(enabled: Boolean) {
-        context.dataStore.edit { preferences ->
-            preferences[BLUR_FACES] = enabled
-        }
-    }
+    fun getBlurLicensePlates(): Flow<Boolean> = context.dataStore.data.map { it[BLUR_LICENSE_PLATES] ?: true }
+    suspend fun setBlurLicensePlates(v: Boolean) = context.dataStore.edit { it[BLUR_LICENSE_PLATES] = v }
 
-    fun getAutoRemoveMetadata(): Flow<Boolean> {
-        return context.dataStore.data.map { preferences ->
-            preferences[AUTO_REMOVE_METADATA] ?: true
-        }
-    }
+    fun getBlurStreetSigns(): Flow<Boolean> = context.dataStore.data.map { it[BLUR_STREET_SIGNS] ?: true }
+    suspend fun setBlurStreetSigns(v: Boolean) = context.dataStore.edit { it[BLUR_STREET_SIGNS] = v }
 
-    suspend fun setAutoRemoveMetadata(enabled: Boolean) {
-        context.dataStore.edit { preferences ->
-            preferences[AUTO_REMOVE_METADATA] = enabled
-        }
-    }
+    fun getBlurIdBadges(): Flow<Boolean> = context.dataStore.data.map { it[BLUR_ID_BADGES] ?: true }
+    suspend fun setBlurIdBadges(v: Boolean) = context.dataStore.edit { it[BLUR_ID_BADGES] = v }
 
-    fun getBackgroundServiceEnabled(): Flow<Boolean> {
-        return context.dataStore.data.map { preferences ->
-            preferences[BACKGROUND_SERVICE_ENABLED] ?: false
-        }
-    }
+    fun getBlurTextDocs(): Flow<Boolean> = context.dataStore.data.map { it[BLUR_TEXT_DOCS] ?: true }
+    suspend fun setBlurTextDocs(v: Boolean) = context.dataStore.edit { it[BLUR_TEXT_DOCS] = v }
 
-    suspend fun setBackgroundServiceEnabled(enabled: Boolean) {
-        context.dataStore.edit { preferences ->
-            preferences[BACKGROUND_SERVICE_ENABLED] = enabled
-        }
-    }
+    fun getAutoRemoveMetadata(): Flow<Boolean> = context.dataStore.data.map { it[AUTO_REMOVE_METADATA] ?: true }
+    suspend fun setAutoRemoveMetadata(v: Boolean) = context.dataStore.edit { it[AUTO_REMOVE_METADATA] = v }
 }

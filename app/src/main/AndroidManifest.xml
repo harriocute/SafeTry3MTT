@@ -38,7 +38,7 @@
         <activity
             android:name=".ui.ShareReceiverActivity"
             android:exported="true"
-            android:label="ImageSafe 3MTT"
+            android:label="@string/app_name"
             android:icon="@mipmap/ic_launcher"
             android:theme="@style/Theme.SafeTry3MTT.Translucent">
             <intent-filter>
@@ -57,7 +57,7 @@
         <activity
             android:name=".ui.ProcessingActivity"
             android:exported="false"
-            android:label="@string/processing_title" />
+            android:label="@string/app_name" />
 
         <!-- FileProvider for sharing cleaned files -->
         <provider

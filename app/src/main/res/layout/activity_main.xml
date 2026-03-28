@@ -1,293 +1,245 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_dark"
-    tools:context=".ui.MainActivity">
-
+    android:background="@color/background_dark">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="20dp">
 
         <!-- Header -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
-
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_shield"
-                android:tint="@color/accent_cyan"
-                android:layout_marginEnd="12dp" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ImageSafe 3MTT"
-                    android:textColor="@color/text_primary"
-                    android:textSize="26sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="AI Metadata Remover Pro"
-                    android:textColor="@color/accent_cyan"
-                    android:textSize="12sp" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="12dp">
+            <ImageView android:layout_width="44dp" android:layout_height="44dp"
+                android:src="@drawable/ic_shield" android:tint="@color/accent_cyan" android:layout_marginEnd="12dp"/>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:orientation="vertical">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="AI Metadata Remover Pro" android:textColor="@color/text_primary"
+                    android:textSize="18sp" android:textStyle="bold"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Protect your privacy before every share"
+                    android:textColor="@color/text_secondary" android:textSize="11sp"/>
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Tagline -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Protect your privacy before every share"
-            android:textColor="@color/text_secondary"
-            android:textSize="14sp"
-            android:layout_marginBottom="32dp" />
-
-        <!-- Status Card -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            app:cardBackgroundColor="@color/card_dark"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:gravity="center_vertical">
-
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    android:background="@drawable/circle_green"
-                    android:layout_marginEnd="12dp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Share Protection Active"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ON-DEVICE"
-                    android:textColor="@color/accent_cyan"
-                    android:textSize="11sp"
-                    android:background="@drawable/badge_bg"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="3dp" />
+        <!-- Status -->
+        <androidx.cardview.widget.CardView android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="@color/card_dark" app:cardCornerRadius="10dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
+                <View android:layout_width="8dp" android:layout_height="8dp"
+                    android:background="@drawable/circle_green" android:layout_marginEnd="10dp"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:text="Share Protection Active"
+                    android:textColor="@color/text_primary" android:textSize="13sp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="ON-DEVICE" android:textColor="@color/accent_cyan" android:textSize="10sp"
+                    android:background="@drawable/badge_bg" android:paddingHorizontal="8dp" android:paddingVertical="3dp"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Action Buttons -->
+        <!-- Main Buttons -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnScanFile"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="📂  Scan a File"
-            android:textSize="16sp"
-            android:layout_marginBottom="12dp"
-            app:backgroundTint="@color/accent_cyan"
-            android:textColor="@color/background_dark" />
+            android:id="@+id/btnScanFile" android:layout_width="match_parent"
+            android:layout_height="56dp" android:text="🤖  Let AI Do The Job"
+            android:textSize="16sp" android:textStyle="bold" android:layout_marginBottom="10dp"
+            app:backgroundTint="@color/accent_cyan" android:textColor="@color/background_dark"/>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnShareProtection"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="🛡️  Enable Share Protection"
-            android:textSize="16sp"
-            android:layout_marginBottom="32dp"
+            android:id="@+id/btnShareProtection" android:layout_width="match_parent"
+            android:layout_height="48dp" android:text="🛡️  Enable Share Protection"
+            android:textSize="14sp" android:layout_marginBottom="24dp"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            app:strokeColor="@color/accent_cyan"
-            android:textColor="@color/accent_cyan" />
+            app:strokeColor="@color/accent_cyan" android:textColor="@color/accent_cyan"/>
 
-        <!-- Settings Card -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="PRIVACY SETTINGS"
-            android:textColor="@color/text_secondary"
-            android:textSize="11sp"
-            android:letterSpacing="0.15"
-            android:layout_marginBottom="12dp" />
+        <!-- AI Detection Toggles -->
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="AI DETECTION — ALL OPTIONAL"
+            android:textColor="@color/text_secondary" android:textSize="11sp"
+            android:letterSpacing="0.12" android:layout_marginBottom="10dp"/>
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            app:cardBackgroundColor="@color/card_dark"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+        <androidx.cardview.widget.CardView android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_marginBottom="20dp"
+            app:cardBackgroundColor="@color/card_dark" app:cardCornerRadius="10dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- Blur Faces Toggle -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp"
-                    android:gravity="center_vertical">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Blur Faces"
-                            android:textColor="@color/text_primary"
-                            android:textSize="15sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Detect and blur faces in photos"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="12sp" />
+                <!-- License Plates -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
+                    <TextView android:layout_width="30dp" android:layout_height="wrap_content" android:text="🚗" android:textSize="18sp"/>
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="8dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="License Plates" android:textColor="@color/text_primary" android:textSize="14sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Blur vehicle license plates" android:textColor="@color/text_secondary" android:textSize="11sp"/>
                     </LinearLayout>
-
                     <com.google.android.material.switchmaterial.SwitchMaterial
-                        android:id="@+id/switchBlurFaces"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:thumbTint="@color/accent_cyan"
-                        app:trackTint="@color/switch_track_selector" />
+                        android:id="@+id/switchLicensePlates" android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:checked="true"
+                        app:thumbTint="@color/accent_cyan" app:trackTint="@color/switch_track_selector"/>
                 </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp"
+                    android:background="@color/divider" android:layout_marginHorizontal="14dp"/>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/divider"
-                    android:layout_marginHorizontal="16dp" />
-
-                <!-- Auto Remove Metadata Toggle -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp"
-                    android:gravity="center_vertical">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Auto Remove Metadata"
-                            android:textColor="@color/text_primary"
-                            android:textSize="15sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Strip GPS, timestamps, and device info"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="12sp" />
+                <!-- Street Signs -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
+                    <TextView android:layout_width="30dp" android:layout_height="wrap_content" android:text="🪧" android:textSize="18sp"/>
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="8dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Street Signs" android:textColor="@color/text_primary" android:textSize="14sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Blur street and traffic signs" android:textColor="@color/text_secondary" android:textSize="11sp"/>
                     </LinearLayout>
-
                     <com.google.android.material.switchmaterial.SwitchMaterial
-                        android:id="@+id/switchAutoRemoveMetadata"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        app:thumbTint="@color/accent_cyan"
-                        app:trackTint="@color/switch_track_selector" />
+                        android:id="@+id/switchStreetSigns" android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:checked="true"
+                        app:thumbTint="@color/accent_cyan" app:trackTint="@color/switch_track_selector"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp"
+                    android:background="@color/divider" android:layout_marginHorizontal="14dp"/>
+
+                <!-- ID Badges -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
+                    <TextView android:layout_width="30dp" android:layout_height="wrap_content" android:text="🪪" android:textSize="18sp"/>
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="8dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="ID Badges" android:textColor="@color/text_primary" android:textSize="14sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Blur ID cards and badges" android:textColor="@color/text_secondary" android:textSize="11sp"/>
+                    </LinearLayout>
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchIdBadges" android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:checked="true"
+                        app:thumbTint="@color/accent_cyan" app:trackTint="@color/switch_track_selector"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp"
+                    android:background="@color/divider" android:layout_marginHorizontal="14dp"/>
+
+                <!-- Text Documents -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
+                    <TextView android:layout_width="30dp" android:layout_height="wrap_content" android:text="📄" android:textSize="18sp"/>
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="8dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Text Documents" android:textColor="@color/text_primary" android:textSize="14sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Blur visible documents in background" android:textColor="@color/text_secondary" android:textSize="11sp"/>
+                    </LinearLayout>
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchTextDocs" android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:checked="true"
+                        app:thumbTint="@color/accent_cyan" app:trackTint="@color/switch_track_selector"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp"
+                    android:background="@color/divider" android:layout_marginHorizontal="14dp"/>
+
+                <!-- Faces -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
+                    <TextView android:layout_width="30dp" android:layout_height="wrap_content" android:text="👤" android:textSize="18sp"/>
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="8dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Faces" android:textColor="@color/text_primary" android:textSize="14sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Detect and blur faces in photos" android:textColor="@color/text_secondary" android:textSize="11sp"/>
+                    </LinearLayout>
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchBlurFaces" android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:checked="false"
+                        app:thumbTint="@color/accent_cyan" app:trackTint="@color/switch_track_selector"/>
                 </LinearLayout>
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Detects Card -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="DETECTS &amp; BLURS"
-            android:textColor="@color/text_secondary"
-            android:textSize="11sp"
-            android:letterSpacing="0.15"
-            android:layout_marginBottom="12dp" />
+        <!-- Metadata -->
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="METADATA" android:textColor="@color/text_secondary"
+            android:textSize="11sp" android:letterSpacing="0.12" android:layout_marginBottom="10dp"/>
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            app:cardBackgroundColor="@color/card_dark"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="🚗  License Plates" android:textColor="@color/text_primary" android:textSize="14sp" android:layout_marginBottom="8dp"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="🪧  Street Signs" android:textColor="@color/text_primary" android:textSize="14sp" android:layout_marginBottom="8dp"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="🪪  ID Badges" android:textColor="@color/text_primary" android:textSize="14sp" android:layout_marginBottom="8dp"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="📄  Text Documents" android:textColor="@color/text_primary" android:textSize="14sp" android:layout_marginBottom="8dp"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="👤  Faces (when enabled)" android:textColor="@color/text_secondary" android:textSize="14sp"/>
-
+        <androidx.cardview.widget.CardView android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_marginBottom="24dp"
+            app:cardBackgroundColor="@color/card_dark" app:cardCornerRadius="10dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:padding="14dp" android:gravity="center_vertical">
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:orientation="vertical">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="Auto Remove Metadata" android:textColor="@color/text_primary" android:textSize="14sp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="Strip GPS, timestamps, device info" android:textColor="@color/text_secondary" android:textSize="11sp"/>
+                </LinearLayout>
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switchAutoRemoveMetadata" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:checked="true"
+                    app:thumbTint="@color/accent_cyan" app:trackTint="@color/switch_track_selector"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- History Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnPrivacyHistory"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="View Privacy History"
-            android:textSize="14sp"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:textColor="@color/text_secondary" />
+        <!-- Developer Section -->
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="DEVELOPER" android:textColor="@color/text_secondary"
+            android:textSize="11sp" android:letterSpacing="0.12" android:layout_marginBottom="10dp"/>
+
+        <androidx.cardview.widget.CardView android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_marginBottom="20dp"
+            app:cardBackgroundColor="@color/card_dark" app:cardCornerRadius="10dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="16dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="14dp">
+                    <ImageView android:id="@+id/imgDeveloper"
+                        android:layout_width="60dp" android:layout_height="60dp"
+                        android:src="@drawable/ic_shield"
+                        android:scaleType="centerCrop" android:layout_marginEnd="14dp"/>
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Oodo Harrison Chukwuebuka"
+                            android:textColor="@color/text_primary" android:textSize="14sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Problem Solver" android:textColor="@color/accent_cyan" android:textSize="12sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Android Developer" android:textColor="@color/text_secondary" android:textSize="11sp"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnGithub" android:layout_width="0dp"
+                        android:layout_height="36dp" android:layout_weight="1"
+                        android:text="GitHub" android:textSize="12sp" android:layout_marginEnd="8dp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        app:strokeColor="@color/accent_cyan" android:textColor="@color/accent_cyan"/>
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnLinkedin" android:layout_width="0dp"
+                        android:layout_height="36dp" android:layout_weight="1"
+                        android:text="LinkedIn" android:textSize="12sp"
+                        app:backgroundTint="@color/accent_cyan" android:textColor="@color/background_dark"/>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <!-- Footer -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="🔒 100% On-Device Processing • No Data Uploaded • Open Source"
-            android:textColor="@color/text_secondary"
-            android:textSize="11sp"
-            android:gravity="center"
-            android:layout_marginTop="16dp" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="🔒 100% On-Device Processing • No Data Uploaded"
+            android:textColor="@color/text_secondary" android:textSize="11sp"
+            android:gravity="center" android:layout_marginBottom="8dp"/>
 
     </LinearLayout>
 </ScrollView>

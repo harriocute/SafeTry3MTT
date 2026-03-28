@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -19,128 +18,87 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var preferencesManager: PreferencesManager
+    private lateinit var prefs: PreferencesManager
 
     private val pickImageLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let { launchProcessing(it) }
-    }
+    ) { uri: Uri? -> uri?.let { launchProcessing(it) } }
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
-        val allGranted = permissions.values.all { it }
-        if (allGranted) {
-            pickImageLauncher.launch("image/*")
-        } else {
-            Toast.makeText(this, "Storage permission required to scan files", Toast.LENGTH_LONG).show()
-        }
+        if (permissions.values.all { it }) pickImageLauncher.launch("image/*")
+        else Toast.makeText(this, "Storage permission required", Toast.LENGTH_LONG).show()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        preferencesManager = PreferencesManager(this)
-        setupUI()
+        prefs = PreferencesManager(this)
+        setupButtons()
         loadPreferences()
     }
 
-    private fun setupUI() {
-        // Scan a File button
-        binding.btnScanFile.setOnClickListener {
-            checkPermissionsAndPickImage()
+    private fun setupButtons() {
+        binding.btnScanFile.setOnClickListener { checkPermissionsAndPickImage() }
+        binding.btnShareProtection.setOnClickListener { showShareProtectionInfo() }
+        binding.switchBlurFaces.setOnCheckedChangeListener { _, v ->
+            lifecycleScope.launch { prefs.setBlurFaces(v) }
         }
-
-        // Enable Share Protection button
-        binding.btnShareProtection.setOnClickListener {
-            showShareProtectionInfo()
+        binding.switchLicensePlates.setOnCheckedChangeListener { _, v ->
+            lifecycleScope.launch { prefs.setBlurLicensePlates(v) }
         }
-
-        // Blur Faces toggle
-        binding.switchBlurFaces.setOnCheckedChangeListener { _, isChecked ->
-            lifecycleScope.launch {
-                preferencesManager.setBlurFaces(isChecked)
-            }
+        binding.switchStreetSigns.setOnCheckedChangeListener { _, v ->
+            lifecycleScope.launch { prefs.setBlurStreetSigns(v) }
         }
-
-        // Auto Remove Metadata toggle
-        binding.switchAutoRemoveMetadata.setOnCheckedChangeListener { _, isChecked ->
-            lifecycleScope.launch {
-                preferencesManager.setAutoRemoveMetadata(isChecked)
-            }
+        binding.switchIdBadges.setOnCheckedChangeListener { _, v ->
+            lifecycleScope.launch { prefs.setBlurIdBadges(v) }
         }
-
-        // Privacy history button
-        binding.btnPrivacyHistory.setOnClickListener {
-            // Future: show history of processed files
-            Toast.makeText(this, "Privacy history coming soon!", Toast.LENGTH_SHORT).show()
+        binding.switchTextDocs.setOnCheckedChangeListener { _, v ->
+            lifecycleScope.launch { prefs.setBlurTextDocs(v) }
+        }
+        binding.switchAutoRemoveMetadata.setOnCheckedChangeListener { _, v ->
+            lifecycleScope.launch { prefs.setAutoRemoveMetadata(v) }
+        }
+        binding.btnGithub.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/harriocute")))
+        }
+        binding.btnLinkedin.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.linkedin.com/in/harricode")))
         }
     }
 
     private fun loadPreferences() {
-        lifecycleScope.launch {
-            preferencesManager.getBlurFaces().collect { blurFaces ->
-                binding.switchBlurFaces.isChecked = blurFaces
-            }
-        }
-        lifecycleScope.launch {
-            preferencesManager.getAutoRemoveMetadata().collect { autoRemove ->
-                binding.switchAutoRemoveMetadata.isChecked = autoRemove
-            }
-        }
+        lifecycleScope.launch { prefs.getBlurFaces().collect { binding.switchBlurFaces.isChecked = it } }
+        lifecycleScope.launch { prefs.getBlurLicensePlates().collect { binding.switchLicensePlates.isChecked = it } }
+        lifecycleScope.launch { prefs.getBlurStreetSigns().collect { binding.switchStreetSigns.isChecked = it } }
+        lifecycleScope.launch { prefs.getBlurIdBadges().collect { binding.switchIdBadges.isChecked = it } }
+        lifecycleScope.launch { prefs.getBlurTextDocs().collect { binding.switchTextDocs.isChecked = it } }
+        lifecycleScope.launch { prefs.getAutoRemoveMetadata().collect { binding.switchAutoRemoveMetadata.isChecked = it } }
     }
 
     private fun checkPermissionsAndPickImage() {
-        val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
             arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
-        } else {
-            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-        }
-
-        val allGranted = permissions.all {
-            ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
-        }
-
-        if (allGranted) {
+        else arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+        if (permissions.all { ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED })
             pickImageLauncher.launch("image/*")
-        } else {
-            permissionLauncher.launch(permissions)
-        }
+        else permissionLauncher.launch(permissions)
     }
 
     private fun launchProcessing(uri: Uri) {
-        val intent = Intent(this, ProcessingActivity::class.java).apply {
+        startActivity(Intent(this, ProcessingActivity::class.java).apply {
             putExtra(ProcessingActivity.EXTRA_IMAGE_URI, uri.toString())
             putExtra(ProcessingActivity.EXTRA_SOURCE, ProcessingActivity.SOURCE_MANUAL)
-        }
-        startActivity(intent)
+        })
     }
 
     private fun showShareProtectionInfo() {
-        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+        androidx.appcompat.app.AlertDialog.Builder(this)
             .setTitle("Share Protection Active")
-            .setMessage(
-                "ImageSafe 3MTT is ready to protect your photos!\n\n" +
-                "HOW TO USE:\n" +
-                "1. Open your Gallery or Files app\n" +
-                "2. Select any photo\n" +
-                "3. Tap the Share button\n" +
-                "4. Choose 'ImageSafe 3MTT' from the share menu\n" +
-                "5. Review the privacy report\n" +
-                "6. Tap 'Share Clean File' to share safely\n\n" +
-                "ImageSafe 3MTT will automatically:\n" +
-                "• Remove GPS and metadata\n" +
-                "• Detect and blur license plates\n" +
-                "• Detect and blur street signs\n" +
-                "• Detect and blur ID badges\n" +
-                (if (binding.switchBlurFaces.isChecked) "• Blur detected faces\n" else "") +
-                "\nAll processing happens ON YOUR DEVICE. No data is uploaded."
-            )
-            .setPositiveButton("Got it!") { dialog, _ -> dialog.dismiss() }
-            .create()
-        dialog.show()
+            .setMessage("Open Gallery → Share any photo → Choose AI Metadata Remover Pro → Review report → Share Clean File\n\nAll processing is 100% ON-DEVICE.")
+            .setPositiveButton("Got it!") { d, _ -> d.dismiss() }
+            .show()
     }
 }

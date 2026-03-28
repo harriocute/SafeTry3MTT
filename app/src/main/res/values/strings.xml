@@ -1,38 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ImageSafe 3MTT</string>
-    <string name="processing_title">ImageSafe 3MTT</string>
-    <string name="share_target_label">ImageSafe 3MTT</string>
-
-    <!-- UI Labels -->
-    <string name="btn_scan_file">Scan a File</string>
+    <string name="app_name">AI Metadata Remover Pro</string>
+    <string name="processing_title">AI Metadata Remover Pro</string>
+    <string name="share_target_label">AI Metadata Remover Pro</string>
+    <string name="btn_scan_file">Let AI Do The Job</string>
     <string name="btn_share_protection">Enable Share Protection</string>
     <string name="btn_share_clean">Share Clean File</string>
     <string name="btn_cancel">Cancel</string>
-
-    <!-- Settings -->
     <string name="toggle_blur_faces">Blur Faces</string>
-    <string name="toggle_blur_faces_desc">Detect and blur faces in photos</string>
+    <string name="toggle_license_plates">Blur License Plates</string>
+    <string name="toggle_street_signs">Blur Street Signs</string>
+    <string name="toggle_id_badges">Blur ID Badges</string>
+    <string name="toggle_text_docs">Blur Text Documents</string>
     <string name="toggle_auto_metadata">Auto Remove Metadata</string>
     <string name="toggle_auto_metadata_desc">Strip GPS, timestamps, and device info</string>
-
-    <!-- Messages -->
-    <string name="processing_analyzing">Analyzing Privacy Risks…</string>
-    <string name="processing_complete">Analysis Complete</string>
-    <string name="no_image">No image provided</string>
-    <string name="share_error">Error sharing file</string>
-
-    <!-- Notification -->
-    <string name="notification_title">ImageSafe 3MTT Active</string>
-    <string name="notification_text">Protecting your photos when you share</string>
-    <string name="notification_stop">Stop</string>
-
-    <!-- Privacy Report -->
-    <string name="report_title">Privacy Analysis Report</string>
-    <string name="report_no_risks">No privacy risks detected!</string>
-    <string name="score_label_before">Before</string>
-    <string name="score_label_after">After</string>
-
-    <!-- File Provider authority -->
     <string name="file_provider_authority" translatable="false">com.safetry.privacy.fileprovider</string>
 </resources>
